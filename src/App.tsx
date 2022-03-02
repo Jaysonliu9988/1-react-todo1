@@ -14,91 +14,122 @@ interface iSearchParam {
 }
 
 function App() {
-  const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
+  fetch('api/users')
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+  fetch('api/todos')
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+  
   const [userList, setUserList] = useState<Options[]>([])
-  const [tableList, setTableList] = useState<TableItem[]>([])
-  const [reload, setReload] = useState<boolean>(false)
-
-
-  const getTableList = (
-    todoItems: TodoItem[],
-    userItems: User[]
-  ): TableItem[] => {
-    const tableItems: TableItem[] = []
-    todoItems.forEach(todo => {
-      userItems.forEach(user => {
-        if (todo.user === user.id) {
-          const tableItem: TableItem = {
-            id: todo.id as number,
-            taskName: todo.name,
-            userId: user.id,
-            userName: user.firstName + ' ' + user.lastName,
-            isCompleted: todo.isComplete,
-          }
-          tableItems.push(tableItem)
-        }
-      })
-    })
-    return tableItems
-  }
-
+  
   const getUserOptions = (users: User[]): Options[] => {
     let userOptions: Options[] = []
     users.forEach(user => {
       userOptions.push({
         value: user.id,
-        label: user.firstName + ' ' + user.lastName,
+        label: user.firstName + '' + user.lastName
+
       })
     })
     return userOptions
   }
 
-  const queryTodoList = async ({
-    name,
-    userId,
-    completed,
-  }: QueryParameters): Promise<void> => {
-    const todos = userId ? await axios.get<ITodos>(`api/user/${userId}/todos`) : await axios.get<ITodos>(`api/todos`)
-    console.log(todos);
-    const users = await axios.get<IUsers>('api/users')
-    setUserList(getUserOptions(users.data.users))
+  const queryUserOptions = async ({
+    
+  })
+  // const queryUserOptions = async ({
 
-    let newTableList: TableItem[] = []
-    let tList = getTableList(todos.data.todos, users.data.users)
-
-    let tmpData = tList.filter((p) => p.taskName.indexOf(name || '') >= 0)
-    if (userId) {
-      tmpData = tmpData.filter((p) => p.userId === userId)
-    }
-    if (typeof completed === 'boolean') {
-      tmpData = tmpData.filter((p) => p.isCompleted === completed)
-    }
-
-    setTableList(tmpData)
-  }
+  // })
 
 
-  const fetchData = async () => {
-    queryTodoList({})
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [reload])
-
-  useEffect(() => {
-    queryTodoList({ ...searchParams })
-  }, [searchParams])
+  // const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
+  // const [userList, setUserList] = useState<Options[]>([])
+  // const [tableList, setTableList] = useState<TableItem[]>([])
+  // const [reload, setReload] = useState<boolean>(false)
 
 
-  const handleSwitchChange = (event: any) => {
-    let value = event.target.checked
-    // queryTodoList({completed: value})
-    // setSearchParams({...searchParams, completed: value});
-    setSearchParams({ completed: value });
-  }
+  // const getTableList = (
+  //   todoItems: TodoItem[],
+  //   userItems: User[]
+  // ): TableItem[] => {
+  //   const tableItems: TableItem[] = []
+  //   todoItems.forEach(todo => {
+  //     userItems.forEach(user => {
+  //       if (todo.user === user.id) {
+  //         const tableItem: TableItem = {
+  //           id: todo.id as number,
+  //           taskName: todo.name,
+  //           userId: user.id,
+  //           userName: user.firstName + ' ' + user.lastName,
+  //           isCompleted: todo.isComplete,
+  //         }
+  //         tableItems.push(tableItem)
+  //       }
+  //     })
+  //   })
+  //   return tableItems
+  // }
 
-  console.log('tableList', tableList)
+  // const getUserOptions = (users: User[]): Options[] => {
+  //   let userOptions: Options[] = []
+  //   users.forEach(user => {
+  //     userOptions.push({
+  //       value: user.id,
+  //       label: user.firstName + ' ' + user.lastName,
+  //     })
+  //   })
+  //   return userOptions
+  // }
+
+  // const queryTodoList = async ({
+  //   name,
+  //   userId,
+  //   completed,
+  // }: QueryParameters): Promise<void> => {
+  //   const todos = userId ? await axios.get<ITodos>(`api/user/${userId}/todos`) : await axios.get<ITodos>(`api/todos`)
+  //   console.log(todos);
+  //   const users = await axios.get<IUsers>('api/users')
+  //   setUserList(getUserOptions(users.data.users))
+
+  //   let newTableList: TableItem[] = []
+  //   let tList = getTableList(todos.data.todos, users.data.users)
+
+  //   let tmpData = tList.filter((p) => p.taskName.indexOf(name || '') >= 0)
+  //   if (userId) {
+  //     tmpData = tmpData.filter((p) => p.userId === userId)
+  //   }
+  //   if (typeof completed === 'boolean') {
+  //     tmpData = tmpData.filter((p) => p.isCompleted === completed)
+  //   }
+
+  //   setTableList(tmpData)
+  // }
+
+
+  // const fetchData = async () => {
+  //   queryTodoList({})
+  // }
+
+  // useEffect(() => {
+  //   fetchData()
+  // }, [reload])
+
+  // useEffect(() => {
+  //   queryTodoList({ ...searchParams })
+  // }, [searchParams])
+
+
+  // const handleSwitchChange = (event: any) => {
+  //   let value = event.target.checked
+  //   // queryTodoList({completed: value})
+  //   // setSearchParams({...searchParams, completed: value});
+  //   setSearchParams({ completed: value });
+  // }
+
+  // console.log('tableList', tableList)
 
   return (
     <div className='App'>
@@ -109,7 +140,7 @@ function App() {
         </div>
         <div className='func'>
           <p>User</p>
-          <Select onChange={handleSwitchChange} options={userList}/>
+          <Select/>
         </div>
         <div className='func'>
           <p>Completed</p>
