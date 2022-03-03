@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import Select from 'react-select';
 import './App.css';
 import {TextField, Switch, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell} from '@material-ui/core';
-import useTodos, { Form, ITodos, IUsers, Options, QueryParameters, TableItem, TodoItem, User } from './hooks/useTodos'
+import useTodos, { Form, ITodos, IUsers, Options, QueryParameters, TableItem, TodoItem, User, } from './hooks/useTodos'
 import axios from 'axios'
 
 
@@ -24,6 +24,34 @@ function App() {
 
   
   const [userList, setUserList] = useState<Options[]>([])
+  const [tableList, setTableList] = useState<TableItem[]>([])
+  const [userList, setUserList] = useState<Options[]>([])
+
+
+
+  const getTableList = (
+    todoItems: TodoItem[],
+    userItems: User[]
+    ): TableItem[] => {
+    const tableItems: TableItem[] = []
+    todoItems.forEach(todo => {
+      userItems.forEach(user => {
+        if (todo.user === user.id) {
+          const tableItem: TableItem = {
+            id: todo.id as number,
+            taskName: todo.name,
+            userId: user.id,
+            userName: user.firstName + ' ' + user.lastName,
+            isCompleted: todo.isComplete,
+          }
+          console.log('todoItems', todoItems)
+
+          tableItems.push(tableItem)
+        }
+      })
+    })
+    return tableItems
+  }
   
   const getUserOptions = (users: User[]): Options[] => {
     let userOptions: Options[] = []
@@ -37,9 +65,7 @@ function App() {
     return userOptions
   }
 
-  const queryUserOptions = async ({
-    
-  })
+  
   // const queryUserOptions = async ({
 
   // })
