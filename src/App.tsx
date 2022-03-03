@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import Select from 'react-select';
 import './App.css';
-import {TextField, Switch, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell} from '@material-ui/core';
+import { TextField, Switch, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core';
 import useTodos, { Form, ITodos, IUsers, Options, QueryParameters, TableItem, TodoItem, User, } from './hooks/useTodos'
 import axios from 'axios'
 
@@ -22,17 +22,19 @@ function App() {
     .then(response => response.json())
     .then(data => console.log(data));
 
-  
-  const [userList, setUserList] = useState<Options[]>([])
+
   const [tableList, setTableList] = useState<TableItem[]>([])
   const [userList, setUserList] = useState<Options[]>([])
+  const [reload, setReload] = useState<boolean>(false)
+  const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
+
 
 
 
   const getTableList = (
     todoItems: TodoItem[],
     userItems: User[]
-    ): TableItem[] => {
+  ): TableItem[] => {
     const tableItems: TableItem[] = []
     todoItems.forEach(todo => {
       userItems.forEach(user => {
@@ -52,7 +54,7 @@ function App() {
     })
     return tableItems
   }
-  
+
   const getUserOptions = (users: User[]): Options[] => {
     let userOptions: Options[] = []
     users.forEach(user => {
@@ -65,10 +67,35 @@ function App() {
     return userOptions
   }
 
-  
-  // const queryUserOptions = async ({
+  const queryTodoList = async ({
+    name,
+    userId,
+    completed,
+  }: QueryParameters): Promise<void> => {
+    const todos = userId ? await axios.get<ITodos>(`api/user/${userId}/todos`) : await axios.get<ITodos>(`api/todos`)
+    console.log('todos', todos);
+    const users = await axios.get<IUsers>('api/users')
+    setUserList(getUserOptions(users.data.users))
 
-  // })
+    let tList = getTableList(todos.data.todos, users.data.users)
+    let tmpData = tList.filter((p) => p.taskName.indexOf(name || '') >= 0)
+
+    if (userId) {
+      tmpData = tmpData.filter((p) => p.userId === userId)
+    }
+    if (typeof completed === 'boolean') {
+      tmpData = tmpData.filter((p) => p.isCompleted === completed)
+    }
+    setTableList(tmpData)
+  }
+
+  const fetchData = async () => {
+    queryTodoList({})
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [reload])
 
 
   // const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
@@ -156,6 +183,12 @@ function App() {
   // }
 
   // console.log('tableList', tableList)
+  const handleSelectChange = (event: any) => {
+    console.log(event)
+    // setSearchParams({...searchParams, userId: event ? event.value : ''});
+    setSearchParams({ userId: event ? event.value : '' });
+
+  }
 
   return (
     <div className='App'>
@@ -166,7 +199,7 @@ function App() {
         </div>
         <div className='func'>
           <p>User</p>
-          <Select/>
+          <Select onChange={handleSelectChange} options={userList} />
         </div>
         <div className='func'>
           <p>Completed</p>
