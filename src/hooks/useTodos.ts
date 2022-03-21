@@ -1,5 +1,6 @@
-import axios from 'axios'
-import useState from 'react'
+import axios from "axios"
+import { useState } from 'react'
+
 
 export interface ITodos {
     todos: Array<TodoItem>
@@ -48,27 +49,19 @@ export interface QueryParameters {
     completed?: boolean
 }
 
+const useTodos = () => {
+    const [reload, setReload] = useState<boolean>(false)
 
+    const deleteTodo = async (id: number) => {
+        await axios.delete(`api/todo/${id}/delete`)
+        return true;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return {
+        reload,
+        deleteTodo
+    }
+}
 
 
 export default useTodos

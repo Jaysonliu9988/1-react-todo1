@@ -16,13 +16,13 @@ interface iSearchParam {
 }
 
 function App() {
-  fetch('api/users')
-    .then(response => response.json())
-    .then(data => console.log(data));
+  // fetch('api/users')
+  //   .then(response => response.json())
+  //   .then(data => console.log(data));
 
-  fetch('api/todos')
-    .then(response => response.json())
-    .then(data => console.log(data));
+  // fetch('api/todos')
+  //   .then(response => response.json())
+  //   .then(data => console.log(data));
 
 
   const [tableList, setTableList] = useState<TableItem[]>([])
@@ -30,8 +30,20 @@ function App() {
   const [reload, setReload] = useState<boolean>(false)
   const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
 
+  const { deleteTodo } = useTodos()
 
 
+  const getUserOptions = (users: User[]): Options[] => {
+    let userOptions: Options[] = []
+    users.forEach(user => {
+      userOptions.push({
+        value: user.id,
+        label: user.firstName + '' + user.lastName
+
+      })
+    })
+    return userOptions
+  }
 
   const getTableList = (
     todoItems: TodoItem[],
@@ -48,25 +60,12 @@ function App() {
             userName: user.firstName + ' ' + user.lastName,
             isCompleted: todo.isComplete,
           }
-          console.log('todoItems', todoItems)
 
           tableItems.push(tableItem)
         }
       })
     })
     return tableItems
-  }
-
-  const getUserOptions = (users: User[]): Options[] => {
-    let userOptions: Options[] = []
-    users.forEach(user => {
-      userOptions.push({
-        value: user.id,
-        label: user.firstName + '' + user.lastName
-
-      })
-    })
-    return userOptions
   }
 
   const queryTodoList = async ({
@@ -99,13 +98,18 @@ function App() {
     fetchData()
   }, [reload])
 
-  // console.log('tableList', tableList)
+  useEffect(() => {
+    queryTodoList({ ...searchParams })
+  }, [searchParams])
+
+
   const handleSelectChange = (event: any) => {
-    console.log(event)
-    // setSearchParams({...searchParams, userId: event ? event.value : ''});
+    console.log('This is event',  event)
     setSearchParams({ userId: event ? event.value : '' });
 
   }
+
+  console.log('tableList', tableList)
 
   return (
     <div className='App'>
@@ -152,6 +156,10 @@ function App() {
                     <IconButton
                       aria-label='delete'
                       color='secondary'
+                      onClick={() => {
+                        deleteTodo(row.id)
+                        setReload(!reload)
+                      }}
                     >
                       <DeleteIcon />
                     </IconButton>
