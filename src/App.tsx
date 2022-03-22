@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import Select from 'react-select';
 import './App.css';
-import { TextField, Switch, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, IconButton } from '@material-ui/core';
+import { TextField, Switch, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, IconButton, Button } from '@material-ui/core';
 import useTodos, { Form, ITodos, IUsers, Options, QueryParameters, TableItem, TodoItem, User, } from './hooks/useTodos'
 import axios from 'axios'
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,6 +29,7 @@ function App() {
   const [userList, setUserList] = useState<Options[]>([])
   const [reload, setReload] = useState<boolean>(false)
   const [searchParams, setSearchParams] = useState<iSearchParam>({ name: '', userId: 0 })
+  const [open, setOpen] = useState<boolean>(false)
 
   const { deleteTodo } = useTodos()
 
@@ -109,6 +110,9 @@ function App() {
 
   }
 
+  const handleAdd = () => {
+    setOpen(true)
+  }
   console.log('tableList', tableList)
 
   return (
@@ -169,7 +173,17 @@ function App() {
             </TableBody>
           </Table>
         </TableContainer>
+        
+        <Button
+          className='btn'
+          variant='contained'
+          color='primary'
+          onClick={handleAdd}
+        >
+          Add Task
+        </Button>
       </div>
+
     </div>
   );
 }

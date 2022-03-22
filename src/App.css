@@ -18,3 +18,13 @@
   align-items: center;
   margin-bottom: 10px;
 }
+
+.table-container {
+  position: relative;
+}
+
+.table-container .btn {
+  position: absolute;
+  right: 0;
+  bottom: -40px;
+}
