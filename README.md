@@ -1,5 +1,14 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Demo 
+![](./documentation/screenShot.png)
+
+### Completed requirements
+- List Tasks
+- Delete Task
+- Add Task Form
+- Global State (React Hooks and Context Providers)
+
 
 ## Steps setup to the App 
 - npm install
